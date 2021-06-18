@@ -1,0 +1,17 @@
+Servlet : Technology used to develop web application.
+
+CGI : Common gateway interface
+print("<html>");
+print("</html>");
+----------------------------------------------------
+
+Client (Web Mobile)  ----> servlet   --manipulations-->  page ----> client
+
+MVC :
+
+
+M : Model
+
+V : View
+
+C : Controller
