@@ -16,6 +16,12 @@ public interface CustomerService {
 
     Response createCustomer(Customer customer);
 
-    List<Customer> findAllCustomer();
+    void updateCustomer(Customer customer) throws SQLException;
+
+    List<Customer> findAllCustomer() throws SQLException;
+
+    void deleteCustomer(int id);
+
+    Customer findCustomerById(int id) throws SQLException;
 
 }

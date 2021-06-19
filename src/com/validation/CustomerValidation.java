@@ -28,7 +28,7 @@ public class CustomerValidation {
                 customerError.setHasError(true);
                 customerError.setFullNameError("Name should be greater than 3 characters");
             }
-            if (customer.getEmail() != null) {
+            if (customer.getEmail() == null) {
                 customerError.setHasError(true);
                 customerError.setEmailError("Email should not be null");
             } else if (customerDAO.findByEmailAddress(customer.getEmail()) != null) {
@@ -37,12 +37,12 @@ public class CustomerValidation {
             }
 
 
-            if (customer.getMobileNumber() != null) {
+            if (customer.getMobileNumber() == null) {
                 customerError.setHasError(true);
                 customerError.setMobileNumberError("Mobile number should not be null");
             } else if (customerDAO.findByMobileNumber(customer.getMobileNumber()) != null) {
                 customerError.setHasError(true);
-                customerError.setFullNameError("Mobile number already exists");
+                customerError.setMobileNumberError("Mobile number already exists");
             }
             return customerError;
         } catch (Exception ex) {

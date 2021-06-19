@@ -27,47 +27,81 @@ public class CustomerServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String action = request.getParameter("action");
-        if (action.equalsIgnoreCase("landingPage")) {
-            request.setAttribute("colorList", colorList());
-            RequestDispatcher requestDispatcher = request.getRequestDispatcher("customer/customer.jsp");
-            requestDispatcher.forward(request, response);
-        } else if (action.equalsIgnoreCase("listPage")) {
-            response.sendRedirect("customer/list.jsp");
-        } else {
-            response.sendRedirect("customer/customer.jsp");
-        }
+        try {
+            String action = request.getParameter("action");
+            if (action.equalsIgnoreCase("landingPage")) {
+                //request.setAttribute("colorList", colorList());
+                request.setAttribute("customerList", customerService.findAllCustomer());
 
+                RequestDispatcher requestDispatcher = request.getRequestDispatcher("customer/customer.jsp");
+                requestDispatcher.forward(request, response);
+            } else if (action.equalsIgnoreCase("delete")) {
+                int id = Integer.parseInt(request.getParameter("id"));
+                customerService.deleteCustomer(id);
+                response.sendRedirect("/customer?action=landingPage");
+            } else if (action.equalsIgnoreCase("edit")) {
+                int id = Integer.parseInt(request.getParameter("id"));
+                Customer customer = customerService.findCustomerById(id);
+                request.setAttribute("customer", customer);
+                request.setAttribute("customerList", customerService.findAllCustomer());
+
+                RequestDispatcher requestDispatcher = request.getRequestDispatcher("customer/customer.jsp");
+                requestDispatcher.forward(request, response);
+
+            } else {
+                response.sendRedirect("customer/customer.jsp");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String action = request.getParameter("action");
-        if (action.equalsIgnoreCase("save")) {
-            String fullName = request.getParameter("fullName");
-            String address = request.getParameter("address");
-            String email = request.getParameter("email");
-            String mobileNumber = request.getParameter("mobileNumber");
-            String gender = request.getParameter("gender");
-            /**
-             * I can save this data and send user message
-             */
-            Customer customer = new Customer(fullName, address, email, mobileNumber, Gender.valueOf(gender));
-            Response createResponse = customerService.createCustomer(customer);
-            if (createResponse.isStatus()) {
-                request.setAttribute("message", createResponse.getMessage());
+        try {
+            String action = request.getParameter("action");
+            if (action.equalsIgnoreCase("save")) {
+                String stringId = request.getParameter("id");
+                String fullName = request.getParameter("fullName");
+                String address = request.getParameter("address");
+                String email = request.getParameter("email");
+                String mobileNumber = request.getParameter("mobileNumber");
+                String gender = request.getParameter("gender");
+                /**
+                 * I can save this data and send user message
+                 */
+                Customer customer = new Customer(fullName, address, email, mobileNumber, Gender.valueOf(gender));
+                int id = stringId.equals("") ? 0 : Integer.parseInt(stringId);
+                if (id == 0) {
+
+                    Response createResponse = customerService.createCustomer(customer);
+                    if (createResponse.isStatus()) {
+                        request.setAttribute("message", createResponse.getMessage());
+                    } else {
+                        request.setAttribute("message", createResponse.getMessage());
+                        request.setAttribute("customerError", createResponse.getError());
+
+                    }
+                    //request.setAttribute("colorList", colorList());
+
+                } else {
+                    /**
+                     * We are here to update
+                     */
+                    customer.setId(id);
+                    customerService.updateCustomer(customer);
+                }
+
+                request.setAttribute("customerList", customerService.findAllCustomer());
+                RequestDispatcher requestDispatcher = request.getRequestDispatcher("customer/customer.jsp");
+                requestDispatcher.forward(request, response);
+
             } else {
-                request.setAttribute("message", createResponse.getMessage());
-                request.setAttribute("customerError", createResponse.getError());
-
+                response.sendRedirect("customer/customer.jsp");
             }
-            request.setAttribute("colorList", colorList());
-            RequestDispatcher requestDispatcher = request.getRequestDispatcher("customer/customer.jsp");
-            requestDispatcher.forward(request, response);
-
-        } else {
-            response.sendRedirect("customer/customer.jsp");
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 

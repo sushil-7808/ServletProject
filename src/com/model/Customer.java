@@ -15,6 +15,7 @@ public class Customer {
     private String email;
     private String mobileNumber;
     private Gender gender;
+    private String g;
 
 
 
@@ -40,6 +41,15 @@ public class Customer {
         this.email = email;
         this.mobileNumber = mobileNumber;
         this.gender = gender;
+    }
+
+    public Customer(Integer id, String fullName, String address, String email, String mobileNumber, String g) {
+        this.id = id;
+        this.fullName = fullName;
+        this.address = address;
+        this.email = email;
+        this.mobileNumber = mobileNumber;
+        this.g = g;
     }
 
     public Integer getId() {
@@ -88,5 +98,13 @@ public class Customer {
 
     public void setGender(Gender gender) {
         this.gender = gender;
+    }
+
+    public String getG() {
+        return g;
+    }
+
+    public void setG(String g) {
+        this.g = g;
     }
 }

@@ -18,7 +18,6 @@ import java.util.List;
  */
 public class CustomerDAO {
 
-
     public boolean createCustomer(Customer customer) throws SQLException {
         DatabaseConnection databaseConnection = new DatabaseConnection();
         try {
@@ -42,7 +41,6 @@ public class CustomerDAO {
         }
         return false;
     }
-
 
     public List<Customer> findAllCustomer() throws SQLException {
         DatabaseConnection databaseConnection = new DatabaseConnection();
@@ -111,4 +109,69 @@ public class CustomerDAO {
         }
         return null;
     }
+
+    public void deleteCustomer(int id) {
+        try {
+            DatabaseConnection databaseConnection = new DatabaseConnection();
+            String deleteSQL = "delete from xyz_customer where id = ?";
+            PreparedStatement pstmt = databaseConnection.connection.prepareStatement(deleteSQL);
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
+        }
+    }
+
+    public Customer findCustomerById(int id) throws SQLException {
+        DatabaseConnection databaseConnection = new DatabaseConnection();
+        try {
+            String findByIdSQL = "select * from xyz_customer where id = ?";
+            PreparedStatement preparedStatement = databaseConnection.connection.prepareStatement(findByIdSQL);
+            preparedStatement.setInt(1, id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                return new Customer(resultSet.getInt(1),
+                        resultSet.getString(2),
+                        resultSet.getString(3), resultSet.getString(4),
+                        resultSet.getString(5), Gender.findByOrdinal(resultSet.getInt(6)).name());
+            }
+
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            databaseConnection.connection.close();
+        }
+        return null;
+    }
+
+    public void updateCustomer(Customer customer) throws SQLException {
+
+
+        DatabaseConnection databaseConnection = new DatabaseConnection();
+        try {
+            String updateSQL = "update xyz_customer\n" +
+                    "set full_name=?,\n" +
+                    "    address=?,\n" +
+                    "    email=?,\n" +
+                    "    mobile_number =?,\n" +
+                    "    gender=?\n" +
+                    "where id = ?";
+            PreparedStatement preparedStatement = databaseConnection.connection.prepareStatement(updateSQL);
+            preparedStatement.setString(1, customer.getFullName());
+            preparedStatement.setString(2, customer.getAddress());
+            preparedStatement.setString(3, customer.getEmail());
+            preparedStatement.setString(4, customer.getMobileNumber());
+            preparedStatement.setInt(5, customer.getGender().ordinal());
+            preparedStatement.setInt(6, customer.getId());
+            preparedStatement.executeUpdate();
+
+
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            databaseConnection.connection.close();
+        }
+    }
+
 }

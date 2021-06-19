@@ -7,6 +7,7 @@ import com.service.CustomerService;
 import com.validation.CustomerError;
 import com.validation.CustomerValidation;
 
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -50,11 +51,26 @@ public class CustomerServiceImpl implements CustomerService {
             ex.printStackTrace();
             return null;
         }
-        return null;
+        return response;
     }
 
     @Override
-    public List<Customer> findAllCustomer() {
-        return null;
+    public void updateCustomer(Customer customer) throws SQLException {
+        customerDAO.updateCustomer(customer);
+    }
+
+    @Override
+    public List<Customer> findAllCustomer() throws SQLException {
+        return customerDAO.findAllCustomer();
+    }
+
+    @Override
+    public void deleteCustomer(int id) {
+        customerDAO.deleteCustomer(id);
+    }
+
+    @Override
+    public Customer findCustomerById(int id) throws SQLException {
+        return customerDAO.findCustomerById(id);
     }
 }
